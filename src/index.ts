@@ -30,8 +30,8 @@ export class MyClass {
   }
 
   pageRequest(){
-    const hadithidstart=0
-    const hadithidMax = 1000;
+    const hadithidstart=2001
+    const hadithidMax = 7000;
     const bookid = 0;
     const filename = `contentBook(${bookid})(${hadithidstart}-${hadithidMax}).json`;
     
@@ -63,9 +63,10 @@ export class MyClass {
         //recursive request
         try {
           var avrageRequestTime = ( (Date.now()-startTime)/(1000) ) /(hadithid-hadithidstart);
-          var remainingTime=avrageRequestTime*(hadithidMax-hadithid)
+          var remainingTime=avrageRequestTime*(hadithidMax-hadithid);
+          //var Stagemax=(hadithidMax-hadithidstart)
           if (hadithid < hadithidMax) {
-            console.log(`currnt:${hadithid}, remaining:${hadithidMax-hadithid}, done:${hadithid-hadithidstart},avrageRequestTime:${avrageRequestTime}, est:${Math.floor(remainingTime) }`);
+            console.log(`currnt:${hadithid}, prog:${( ( (hadithidMax-hadithidstart)/(hadithidMax-hadithid) )-1 )*100}%, remaining:${hadithidMax-hadithid}, done:${hadithid-hadithidstart},avrageRequestTime:${avrageRequestTime}, est:${Math.floor(remainingTime) }`);
             hadithid++;
             url =_this.makeUrl(0,hadithid)
             _this.GET(url,callback);
