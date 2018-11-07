@@ -5,15 +5,21 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --config jestconfig.json",
-    "build": "tsc"
+    "build": "tsc --watch",
+    "start": "node-dev ./lib/index"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dom-parser": "^0.1.5"
+    "@types/cheerio": "^0.22.9",
+    "@types/iconv": "^2.1.16",
+    "@types/jsdom": "^12.2.0",
+    "dom-parser": "^0.1.5",
+    "windows-1256": "^1.0.0"
   },
   "devDependencies": {
     "@types/jest": "^23.3.9",
+    "@types/node": "^10.12.2",
     "jest": "^23.6.0",
     "ts-jest": "^23.10.4",
     "typescript": "^3.1.6"
