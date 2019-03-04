@@ -1,10 +1,11 @@
 # Sites Reader
-Sites Reader is TypeScript Node.js server that recursively looks through thousands of web pages and it's html content to find id or class in each page and save every matching content in easy to use json format, it looks through the specified html element and pulls out it's text content to an object that contains the text's parent class, id, styles and other attributes, then add this object to the results array, thus converting a recursive html element to simple text object array
+Sites Reader is TypeScript Node.js module that recursively looks through thousands of web pages and it's html content to find an id in each page and save every matching content in an easy to use json format, it looks through the specified html element and pulls out it's text content to an object that contains the text's parent class, id, styles and other attributes, then add this object to the results array, thus converting a recursive html element to simple text object array
 
 **Function:**
-- looks through thousands of webpages based on URL query
-- parse the the html content and find the specified id or class in the html file for save
-- returns as GET response
+- looks through thousands of webpages based on URL query function as a parameter
+- Stops looking based on URL query function as a parameter
+- parse the the html content and find the specified id in the html file for save
+- returns a CustomHTMLObjectArray with refrences of each url used to generate this object
 - can save the original html text for each match
 
 [Project page](https://github.com/MoustafaMohsen/sites-reader)
@@ -26,7 +27,7 @@ We use [SemVer](http://semver.org/) for versioning
 
 ## Authors
 
-* **Moustafa Mohsen** - *Creator* - [moustafamohsen.com](moustafamohsen.com)
+* **Moustafa Mohsen** - *Creator* - [moustafamohsen.com](https://moustafamohsen.com)
 
 
 ## License

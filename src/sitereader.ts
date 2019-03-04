@@ -1,133 +1,115 @@
 import * as http from "http";
 import * as https from "https";
-//import * as DomParser  from "dom-parser";
-import * as windows1256 from 'windows-1256';
-//var iconv = new Iconv('UTF-8', 'ISO-8859-1');
+import * as windows1256 from "windows-1256";
 import * as cheerio from "cheerio";
-
-//var parser = new DomParser();
+import * as HttpRequest from "request";
 export class SiteReader {
-  constructor() {
-  }
+  constructor() {}
   //// ===================================================================
   //// ==================== NEW CODE =======================================
   //// ===================================================================
 
-  objectifyHtmlString(str:string,id:string):MyHtmlObject[]{
+  objectifyHtmlString(str: string, id: string): CustomHtmlObject[] {
     const $ = cheerio.load(str);
 
-    let HtmlArray:MyHtmlObject[]=[];
+    let HtmlArray: CustomHtmlObject[] = [];
 
-    let digger = (nodes)=>
-    { 
-        for (let i = 0; i < nodes.length; i++) {
-            let node = nodes[i];
+    let digger = nodes => {
+      for (let i = 0; i < nodes.length; i++) {
+        let node = nodes[i];
 
-            if( node && node.type =="text"){
-                let htmlobject:MyHtmlObject;
-                let attribs = node.parent.attribs
-                let tagename=node.parent.tagName
-                htmlobject={
-                  attribs,
-                  tagename,
-                  text:node.data
-                }
-                HtmlArray.push(htmlobject);
-            }//if
+        if (node && node.type == "text") {
+          let htmlobject: CustomHtmlObject;
+          let attribs = node.parent.attribs;
+          let tagename = node.parent.tagName;
+          htmlobject = {
+            attribs,
+            tagename,
+            text: node.data
+          };
+          HtmlArray.push(htmlobject);
+        } //if
+        else {
+          digger(node.childNodes);
+        }
+      } //for
+    }; //digger
 
-            else{
-                digger(node.childNodes);
-            }
-
-        }//for
-
-    }//digger
-
-    digger( $(`#${id}`) );
+    digger($(`#${id}`));
     return HtmlArray;
   }
-  
 
   // making request
-  request(URL:string,htmlId:string,URLMaker:Function,Stop:Function): MyHtmlObjectArray[]{
+  request(
+    URL: string,
+    htmlId: string,
+    URLMaker: Function,
+    callbackResult: Function,
+    DynamicURLMaker?:Function
+  ): CustomHTMLObjectArray[] {
     // my variables
-    var Results : MyHtmlObjectArray[]=[];
-    let currentUrl:string=URL;
-    var _this=this;
+    var Results: CustomHTMLObjectArray[] = [];
+    let currentUrl: string = URL;
+    var _this = this;
 
-    var callback = response => {
-      var responseBody = []; 
-      //response.setEncoding("WINDOWS-1255");
-      response.once("data", function(chunk) {
-        var _responseBody;
-      });
-      response.on("data", function(chunk) {
-        responseBody.push(chunk)
-      });
+    var callback = (error, response, body) => {
+      let HTML_Request_Id_Object: CustomHtmlObject[] = _this.objectifyHtmlString(
+        body,
+        htmlId
+      );
 
-      response.on("end", function() {
+      let HTML__Result: CustomHTMLObjectArray = {
+        htmlObject: HTML_Request_Id_Object,
+        html: body,
+        url: currentUrl
+      };
 
-        var buffer = Buffer.concat(responseBody);
-        var binary = buffer.toString('binary');
-        const text = windows1256.decode(binary, {
-          'mode': 'html'
-        });
+      Results.push(HTML__Result);
 
-        // text is the get response html
-
-        let HTML_Request_Id_Object:MyHtmlObject[] = _this.objectifyHtmlString(text,htmlId);
-
-        let HTML__Result:MyHtmlObjectArray = {
-            html:text,
-            url:currentUrl,
-            htmlObject:HTML_Request_Id_Object,
+      //recursive request
+      try {
+        //create the next url
+        if (DynamicURLMaker!=null) {
+          currentUrl = DynamicURLMaker(currentUrl,HTML__Result,Results);
+        }else{
+          currentUrl = URLMaker(currentUrl);
         }
 
-        Results.push(HTML__Result);
-
-        //recursive request
-        try {
-            let isStop=Stop(currentUrl);
-            if (isStop) {
-                // end the get request
-                console.log("Request stack ended");
-                return;
-            }
-            else{
-                currentUrl =URLMaker(currentUrl);
-                _this.GET(currentUrl,callback);
-            }
-
-            } 
-            catch (err) {
-              console.error(err);
-            }        
-      });
-
-    };//callback
+        _this.GET(currentUrl, callback);
+      } catch (err) {
+        if (err === "end it") {
+          // end the get request
+          callbackResult(Results);
+          console.log("Request stack ended");
+          return;
+        }
+        console.error(err);
+      }
+    }; //callback
 
     // Start the recursive eequest
-    _this.GET(currentUrl,callback);
+    _this.GET(currentUrl, callback);
     return Results;
   }
-  GET(url: string, callback: Function) {
-    return http.get(url, function(response) {
-      callback(response);
-    }); //get
-  }//GET
 
-}//class
+  private GET(url: string, callback: Function) {
+    return HttpRequest.get(url, (error, response, body) => {
+      if (error) {
+        throw error;
+      }
+      callback(error, response, body);
+    });
+  } //GET
+} //class
 
-
-interface MyHtmlObject{
-    text:string // the text
-    attribs:any // the parent attribs
-    tagename:string // the parent html tag
+export interface CustomHtmlObject {
+  text: string; // the text
+  attribs: any; // the parent attribs
+  tagename: string; // the parent html tag
 }
 
-
-interface MyHtmlObjectArray{
-    url:string;
-    html:string;
-    htmlObject:MyHtmlObject[];
+export interface CustomHTMLObjectArray {
+  url: string;
+  html: string;
+  htmlObject: CustomHtmlObject[];
 }

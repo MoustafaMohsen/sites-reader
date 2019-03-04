@@ -14,7 +14,10 @@
     "@types/cheerio": "^0.22.9",
     "@types/iconv": "^2.1.16",
     "@types/jsdom": "^12.2.0",
+    "@types/request": "^2.48.1",
+    "cheerio": "^1.0.0-rc.2",
     "dom-parser": "^0.1.5",
+    "request": "^2.88.0",
     "windows-1256": "^1.0.0"
   },
   "devDependencies": {
