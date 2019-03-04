@@ -120,7 +120,12 @@ export class MyClass {
     return _server;
   }
 
-  RemoveTshkeel(str: string) {
+  RemoveTshkeel(str:string) {
+    str=str?str:""
+    var tashkeel_regex= /[\u064E\u0652\u064F\u0650\u0651\u064B\u064D\u064C\u06E1\u06DC\u06E3\u065A\u065C\u0653\u0670\u060E\u0610\u0611\u0612\u0613\u0614\u0615\u0616\u0617\u0618\u0619\u061A\u061C\u0654\u0655\u0656\u0657\u0658\u0659\u065B\u065D\u065E\u065F\u06D4\u06D6\u06D7\u06D8\u06D9\u06DA\u06DB\u06DD\u06DE\u06DF\u06E0\u06E2\u06E4\u06E5\u06E6\u06E7\u06E8\u06EA\u06EB\u06EC\u06ED]/g
+    return str.replace(tashkeel_regex, "");
+  }
+  RemoveTshkeel_old(str: string) {
     var tashkeel_regex = /[ًٌٍَُِّْٰٓ]/g;
     return str.replace(tashkeel_regex, "");
   }
@@ -189,7 +194,6 @@ export class MyClass {
     var url =_this.makeUrl(0,hadithid)
     _this.GET(url,callback);
   }
-  
   analyzeHadith(dom: Document,bookid:number,hadithid:number,url:string):HadithContent{
     var page :HadithContent={
       bookid:bookid,
@@ -199,7 +203,6 @@ export class MyClass {
     }
     return page
   }
-
   analyzDom(dom: Document) {
     var html = dom.getElementById("pagebody")
       ? dom.getElementById("pagebody").innerHTML.trim()
@@ -225,36 +228,18 @@ export class MyClass {
 
   CreateDom(str: string) {
     return new JSDOM(str).window.document;
-  }//CreateDom
-
-
+  }
   GET(url: string, callback: Function) {
     return http.get(url, function(response) {
       callback(response);
     }); //get
-  }//GET
-
+  }
   makeUrl(bookid: number, hadithId: number) {
     //let hadithId = 0 ; //bukhari max 7236
     //let bookid = 0;//bukhari 0, muslim 1
     return `http://www.islamweb.net/maktaba/nindex.php?flag=1&bookid=${bookid}&id=${hadithId}&page=bookpages`;
   }
-
-}//class
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
 interface HadithContent{
   pagehtml:PageHtml;
   bookid:number;
