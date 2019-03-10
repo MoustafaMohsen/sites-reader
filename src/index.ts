@@ -8,12 +8,6 @@ function pathParser(url: string): string[] {
   let parsed = URL.parse(url);
   let pathArray = parsed.pathname.split(/\//);
   return pathArray;
-  /** 
-    let FirstPathName = pathArray[1]?pathArray[1].match(/[a-z|A-Z]+/):""
-    let index1 = parseInt(pathArray[1]);
-    let index2 = parseInt(pathArray[2]);
-    let index3 = parseInt(pathArray[3]);
-    */
 }
 
 function getStringNumbers(str: string) {
