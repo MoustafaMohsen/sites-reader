@@ -6,7 +6,9 @@
   "scripts": {
     "test": "jest --config jestconfig.json",
     "build": "tsc --watch",
-    "start": "node-dev ./lib/index"
+    "start": "node-dev ./lib/index",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "author": "",
   "license": "ISC",
@@ -18,7 +20,8 @@
     "cheerio": "^1.0.0-rc.2",
     "dom-parser": "^0.1.5",
     "request": "^2.88.0",
-    "windows-1256": "^1.0.0"
+    "windows-1256": "^1.0.0",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "@types/jest": "^23.3.9",
@@ -26,5 +29,6 @@
     "jest": "^23.6.0",
     "ts-jest": "^23.10.4",
     "typescript": "^3.1.6"
-  }
+  },
+  "snyk": true
 }
